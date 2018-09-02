@@ -1,22 +1,27 @@
-FROM ubuntu:18.04
+FROM ubuntu:16.04
 
 MAINTAINER KiwenLau <kiwenlau@gmail.com>
 
 WORKDIR /root
 
 # install openssh-server, openjdk and wget
-RUN apt-get update && apt-get install -y openssh-server openjdk-7-jdk wget
+RUN apt-get update && apt-get install -y openssh-server openjdk-8-jdk-headless wget
 
 # install hadoop 3.1.1
-RUN wget https://github.com/kiwenlau/compile-hadoop/releases/download/3.1.1/hadoop-3.1.1.tar.gz && \
+RUN wget http://www-eu.apache.org/dist/hadoop/common/hadoop-3.1.1/hadoop-3.1.1.tar.gz && \
     tar -xzvf hadoop-3.1.1.tar.gz && \
     mv hadoop-3.1.1 /usr/local/hadoop && \
     rm hadoop-3.1.1.tar.gz
 
 # set environment variable
-ENV JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64 
+ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 
 ENV HADOOP_HOME=/usr/local/hadoop 
 ENV PATH=$PATH:/usr/local/hadoop/bin:/usr/local/hadoop/sbin 
+ENV HDFS_NAMENODE_USER="root"
+ENV HDFS_DATANODE_USER="root"
+ENV HDFS_SECONDARYNAMENODE_USER="root"
+ENV YARN_RESOURCEMANAGER_USER="root"
+ENV YARN_NODEMANAGER_USER="root"
 
 # ssh without key
 RUN ssh-keygen -t rsa -f ~/.ssh/id_rsa -P '' && \
